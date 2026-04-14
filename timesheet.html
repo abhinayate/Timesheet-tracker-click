@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f7fb;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 { margin-bottom: 20px; }
+    .row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .row div { flex: 1; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    textarea { resize: vertical; }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .start { background: green; color: white; }
+    .stop { background: red; color: white; }
+    .submit { background: blue; color: white; }
+    .timer-box {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f0f3ff;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Task Manager</h2>
+
+  <div class="row">
+    <div>
+      <label>Task Name</label>
+      <input type="text" id="taskName">
+    </div>
+    <div>
+      <label>Assigned To</label>
+      <input type="text" id="assignedTo">
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Priority</label>
+      <select id="priority">
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+      </select>
+    </div>
+    <div>
+      <label>Status</label>
+      <select id="status">
+        <option>Not Started</option>
+        <option>In Progress</option>
+        <option>Completed</option>
+        <option>On Hold</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label>Due Date</label>
+      <input type="date" id="dueDate">
+    </div>
+    <div>
+      <label>Subtasks</label>
+      <input type="text" id="subtasks" placeholder="Comma separated">
+    </div>
+  </div>
+
+  <div>
+    <label>Description / Remarks</label>
+    <textarea id="description"></textarea>
+  </div>
+
+  <!-- TIMER SECTION -->
+  <div class="timer-box">
+    <label>Task Timer</label><br><br>
+    <button class="start" id="startBtn" onclick="startTimer()">Start Task</button>
+    <button class="stop" id="stopBtn" onclick="stopTimer()" disabled>Stop Task</button>
+
+    <p><strong>Start Time:</strong> <span id="startDisplay">-</span></p>
+    <p><strong>End Time:</strong> <span id="endDisplay">-</span></p>
+    <p><strong>Time Spent:</strong> <span id="duration">-</span></p>
+  </div>
+
+  <div style="margin-top: 15px;">
+    <button class="submit" onclick="submitData()">Submit</button>
+  </div>
+</div>
+
+<script>
+  let startTime = null;
+  let endTime = null;
+
+  function startTimer() {
+    startTime = new Date();
+    document.getElementById("startDisplay").innerText = startTime.toLocaleString();
+
+    document.getElementById("startBtn").disabled = true;
+    document.getElementById("stopBtn").disabled = false;
+  }
+
+  function stopTimer() {
+    endTime = new Date();
+    document.getElementById("endDisplay").innerText = endTime.toLocaleString();
+
+    const diffMs = endTime - startTime;
+    const minutes = Math.floor(diffMs / 60000);
+    const seconds = Math.floor((diffMs % 60000) / 1000);
+
+    document.getElementById("duration").innerText = minutes + " min " + seconds + " sec";
+
+    document.getElementById("startBtn").disabled = false;
+    document.getElementById("stopBtn").disabled = true;
+  }
+
+  function submitData() {
+  const data = {
+    taskName: document.getElementById("taskName").value,
+    assignedTo: document.getElementById("assignedTo").value,
+    priority: document.getElementById("priority").value,
+    status: document.getElementById("status").value,
+    dueDate: document.getElementById("dueDate").value,
+    subtasks: document.getElementById("subtasks").value,
+    description: document.getElementById("description").value,
+    startTime: startTime ? startTime.toLocaleString() : "",
+    endTime: endTime ? endTime.toLocaleString() : "",
+    duration: document.getElementById("duration").innerText
+  };
+
+  fetch("https://script.google.com/macros/s/AKfycbyJySZSyg25_EavlXJAV9hi_FkvH7n-95yIuNeLggDusrO5uWURB6sFAGDmBMlEohMbzw/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(res => res.text())
+  .then(response => {
+    alert("Saved successfully!");
+  })
+  .catch(err => console.error(err));
+}
+</script>
+
+</body>
+</html>
