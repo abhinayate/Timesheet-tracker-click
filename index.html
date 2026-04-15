@@ -157,7 +157,13 @@
     endTime: endTime ? endTime.toLocaleString() : "",
     duration: document.getElementById("duration").innerText
   };
+function downloadExcel() {
+  const sheetId = "YOUR_SHEET_ID";
 
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`;
+
+  window.open(url, "_blank");
+}
   fetch("https://script.google.com/macros/s/AKfycbyJySZSyg25_EavlXJAV9hi_FkvH7n-95yIuNeLggDusrO5uWURB6sFAGDmBMlEohMbzw/exec", {
     method: "POST",
     body: JSON.stringify(data)
