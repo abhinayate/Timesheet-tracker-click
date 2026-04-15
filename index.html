@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Task Manager</title>
+  <title>Timesheet Tracker</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -42,6 +42,7 @@
     .start { background: green; color: white; }
     .stop { background: red; color: white; }
     .submit { background: blue; color: white; }
+    .download { background: orange; color: white; }
     .timer-box {
       margin-top: 15px;
       padding: 10px;
@@ -115,6 +116,7 @@
 
   <div style="margin-top: 15px;">
     <button class="submit" onclick="submitData()">Submit</button>
+    <button class="download" onclick="downloadExcel()">Download Excel</button>
   </div>
 </div>
 
@@ -145,35 +147,35 @@
   }
 
   function submitData() {
-  const data = {
-    taskName: document.getElementById("taskName").value,
-    assignedTo: document.getElementById("assignedTo").value,
-    priority: document.getElementById("priority").value,
-    status: document.getElementById("status").value,
-    dueDate: document.getElementById("dueDate").value,
-    subtasks: document.getElementById("subtasks").value,
-    description: document.getElementById("description").value,
-    startTime: startTime ? startTime.toLocaleString() : "",
-    endTime: endTime ? endTime.toLocaleString() : "",
-    duration: document.getElementById("duration").innerText
-  };
-function downloadExcel() {
-  const sheetId = "11mYhknSS60n9eOBnopxc3X7m8RdSM_l5ihUpuhtMRoA";
+    const data = {
+      taskName: document.getElementById("taskName").value,
+      assignedTo: document.getElementById("assignedTo").value,
+      priority: document.getElementById("priority").value,
+      status: document.getElementById("status").value,
+      dueDate: document.getElementById("dueDate").value,
+      subtasks: document.getElementById("subtasks").value,
+      description: document.getElementById("description").value,
+      startTime: startTime ? startTime.toLocaleString() : "",
+      endTime: endTime ? endTime.toLocaleString() : "",
+      duration: document.getElementById("duration").innerText
+    };
 
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`;
+    fetch("https://script.google.com/macros/s/AKfycbyJySZSyg25_EavlXJAV9hi_FkvH7n-95yIuNeLggDusrO5uWURB6sFAGDmBMlEohMbzw/exec", {
+      method: "POST",
+      body: JSON.stringify(data)
+    })
+    .then(res => res.text())
+    .then(response => {
+      alert("Saved successfully!");
+    })
+    .catch(err => console.error(err));
+  }
 
-  window.open(url, "_blank");
-}
-  fetch("https://script.google.com/macros/s/AKfycbyJySZSyg25_EavlXJAV9hi_FkvH7n-95yIuNeLggDusrO5uWURB6sFAGDmBMlEohMbzw/exec", {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-  .then(res => res.text())
-  .then(response => {
-    alert("Saved successfully!");
-  })
-  .catch(err => console.error(err));
-}
+  function downloadExcel() {
+    const sheetId = "11mYhknSS60n9eOBnopxc3X7m8RdSM_l5ihUpuhtMRoA";
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=xlsx`;
+    window.open(url, "_blank");
+  }
 </script>
 
 </body>
